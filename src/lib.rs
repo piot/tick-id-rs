@@ -14,6 +14,23 @@ impl fmt::Display for TickId {
     }
 }
 
+impl TickId {
+    pub fn new(value: u32) -> Self {
+        if value == u32::MAX {
+            panic!("illegal TickId value {}", value)
+        }
+        TickId(value)
+    }
+
+    pub fn new_unchecked(value: u32) -> TickId {
+        TickId(value)
+    }
+
+    pub fn value(&self) -> u32 {
+        self.0
+    }
+}
+
 impl Add<TickId> for TickId {
     type Output = TickId;
 
@@ -76,6 +93,12 @@ mod tests {
     }
 
     #[test]
+    fn test_new() {
+        let _ = TickId::new(12414);
+        let _ = TickId::new_unchecked(u32::MAX);
+    }
+
+    #[test]
     #[should_panic]
     fn test_sub_underflow() {
         let first = TickId(42);
@@ -94,7 +117,7 @@ mod tests {
     #[test]
     #[should_panic]
     fn test_add_reserved() {
-        let first = TickId(u32::MAX-1);
+        let first = TickId(u32::MAX - 1);
         let second = TickId(1);
         let _ = first + second;
     }
