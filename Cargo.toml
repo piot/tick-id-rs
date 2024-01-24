@@ -1,0 +1,11 @@
+[package]
+name = "tick-id"
+version = "0.0.1"
+edition = "2021"
+license = "MIT"
+description = "Tick ID"
+repository = "https://github.com/piot/tick-id-rs"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
