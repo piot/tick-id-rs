@@ -4,4 +4,4 @@ version = 3
 
 [[package]]
 name = "tick-id"
-version = "0.0.4"
+version = "0.0.6"

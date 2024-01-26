@@ -63,10 +63,10 @@ impl SubAssign<u32> for TickId {
 }
 
 impl Sub<TickId> for TickId {
-    type Output = i32;
+    type Output = i64;
 
-    fn sub(self, other: TickId) -> i32 {
-        (self.0 - other.0) as i32
+    fn sub(self, other: TickId) -> i64 {
+        (self.0 as i64) - (other.0 as i64)
     }
 }
 
@@ -100,6 +100,30 @@ mod tests {
         let second = TickId(1144);
         let result = first - second;
         assert_eq!(result, 11270);
+    }
+
+    #[test]
+    fn test_tick_id_sub() {
+        let first = TickId(12414);
+        let second = TickId(1144);
+        let result = second - first;
+        assert_eq!(result, -11270);
+    }
+
+    #[test]
+    fn test_tick_id_sub_2() {
+        let first = TickId(u32::MAX);
+        let second = TickId(0);
+        let result = second - first;
+        assert_eq!(result, -4294967295);
+    }
+
+    #[test]
+    fn test_tick_id_sub_3() {
+        let first = TickId(0);
+        let second = TickId(u32::MAX);
+        let result = second - first;
+        assert_eq!(result, 4294967295);
     }
 
     #[test]
@@ -138,19 +162,10 @@ mod tests {
         assert_eq!(first.value(), 1143);
     }
 
-
     #[test]
     fn test_new() {
         let tick_id = TickId::new(12414);
         assert_eq!(tick_id.value(), 12414);
-    }
-
-    #[test]
-    #[should_panic]
-    fn test_sub_underflow() {
-        let first = TickId(42);
-        let second = TickId(99);
-        let _ = first - second;
     }
 
     #[test]
