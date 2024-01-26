@@ -9,7 +9,7 @@
 use core::fmt;
 use std::ops::{Add, AddAssign, Sub, SubAssign};
 
-#[derive(Default, Debug, PartialEq, PartialOrd)]
+#[derive(Default, Debug, Clone, Copy, PartialEq, PartialOrd)]
 pub struct TickId(pub u32);
 
 impl fmt::Display for TickId {
