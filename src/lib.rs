@@ -2,10 +2,14 @@
  *  Copyright (c) Peter Bjorklund. All rights reserved. https://github.com/piot/tick-id-rs
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------------------*/
-use core::fmt;
-use std::ops::{Add, Sub};
+//! The value type TickId that specifies a specific tick in a simulation.
+//!
+//! Usually a tick is 16 ms, but can be any integer period of time.
 
-#[derive(Debug, PartialEq)]
+use core::fmt;
+use std::ops::{Add, AddAssign, Sub, SubAssign};
+
+#[derive(Default, Debug, PartialEq, PartialOrd)]
 pub struct TickId(pub u32);
 
 impl fmt::Display for TickId {
@@ -16,10 +20,6 @@ impl fmt::Display for TickId {
 
 impl TickId {
     pub fn new(value: u32) -> Self {
-        TickId(value)
-    }
-
-    pub fn new_unchecked(value: u32) -> TickId {
         TickId(value)
     }
 
@@ -39,6 +39,12 @@ impl Add<u32> for TickId {
     }
 }
 
+impl AddAssign<u32> for TickId {
+    fn add_assign(&mut self, other: u32) {
+        self.0 += other;
+    }
+}
+
 impl Sub<u32> for TickId {
     type Output = TickId;
 
@@ -47,6 +53,12 @@ impl Sub<u32> for TickId {
             panic!("tick underflow. tried to do {} - {}", self.0, other)
         }
         Self(self.0 - other)
+    }
+}
+
+impl SubAssign<u32> for TickId {
+    fn sub_assign(&mut self, other: u32) {
+        self.0 -= other;
     }
 }
 
@@ -91,9 +103,46 @@ mod tests {
     }
 
     #[test]
+    fn test_greater() {
+        let first = TickId(12414);
+        let second = TickId(1144);
+        assert_eq!(first > second, true);
+    }
+
+    #[test]
+    fn test_less() {
+        let first = TickId(12414);
+        let second = TickId(1144);
+        assert_eq!(first < second, false);
+        assert_eq!(second < first, true);
+    }
+
+    #[test]
+    fn test_less_or_equal() {
+        let first = TickId(1144);
+        let second = TickId(1144);
+        assert_eq!(first <= second, true);
+    }
+
+    #[test]
+    fn test_add_assign() {
+        let mut first = TickId(1144);
+        first += 1;
+        assert_eq!(first.value(), 1145);
+    }
+
+    #[test]
+    fn test_sub_assign() {
+        let mut first = TickId(1144);
+        first -= 1;
+        assert_eq!(first.value(), 1143);
+    }
+
+
+    #[test]
     fn test_new() {
-        let _ = TickId::new(12414);
-        let _ = TickId::new_unchecked(u32::MAX);
+        let tick_id = TickId::new(12414);
+        assert_eq!(tick_id.value(), 12414);
     }
 
     #[test]
