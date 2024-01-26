@@ -6,7 +6,7 @@ use core::fmt;
 use std::ops::{Add, Sub};
 
 #[derive(Debug, PartialEq)]
-pub struct TickId(u32);
+pub struct TickId(pub u32);
 
 impl fmt::Display for TickId {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
@@ -16,9 +16,6 @@ impl fmt::Display for TickId {
 
 impl TickId {
     pub fn new(value: u32) -> Self {
-        if value == u32::MAX {
-            panic!("illegal TickId value {}", value)
-        }
         TickId(value)
     }
 
@@ -31,29 +28,33 @@ impl TickId {
     }
 }
 
-impl Add<TickId> for TickId {
+impl Add<u32> for TickId {
     type Output = TickId;
 
-    fn add(self, other: TickId) -> TickId {
-        if let Some(sum) = self.0.checked_add(other.0) {
-            if sum == u32::MAX {
-                panic!("tick reached reserved value {} + {}", self.0, other.0)
-            }
-        } else {
-            panic!("tick overflow. tried to do {} + {}", self.0, other.0)
+    fn add(self, other: u32) -> TickId {
+        if self.0.checked_add(other).is_none() {
+            panic!("tick overflow. tried to do {} + {}", self.0, other)
         }
-        TickId(self.0 + other.0)
+        TickId(self.0 + other)
+    }
+}
+
+impl Sub<u32> for TickId {
+    type Output = TickId;
+
+    fn sub(self, other: u32) -> TickId {
+        if other > self.0 {
+            panic!("tick underflow. tried to do {} - {}", self.0, other)
+        }
+        Self(self.0 - other)
     }
 }
 
 impl Sub<TickId> for TickId {
-    type Output = TickId;
+    type Output = i32;
 
-    fn sub(self, other: TickId) -> TickId {
-        if other.0 > self.0 {
-            panic!("tick underflow. tried to do {} - {}", self.0, other.0)
-        }
-        TickId(self.0 - other.0)
+    fn sub(self, other: TickId) -> i32 {
+        (self.0 - other.0) as i32
     }
 }
 
@@ -73,23 +74,20 @@ mod tests {
     #[test]
     fn test_add() {
         let first = TickId(42);
-        let second = TickId(99);
-        let result = first + second;
+        let result = first + 99;
         assert_eq!(result, TickId(141));
         assert_eq!(result.to_string(), "TickId: 141");
 
         println!("output: {}", result);
     }
 
+
     #[test]
     fn test_sub() {
         let first = TickId(12414);
         let second = TickId(1144);
         let result = first - second;
-        assert_eq!(result, TickId(11270));
-        assert_eq!(result.to_string(), "TickId: 11270");
-
-        println!("output: {}", result);
+        assert_eq!(result, 11270);
     }
 
     #[test]
@@ -110,15 +108,6 @@ mod tests {
     #[should_panic]
     fn test_add_overflow() {
         let first = TickId(u32::MAX);
-        let second = TickId(1);
-        let _ = first + second;
-    }
-
-    #[test]
-    #[should_panic]
-    fn test_add_reserved() {
-        let first = TickId(u32::MAX - 1);
-        let second = TickId(1);
-        let _ = first + second;
+        let _ = first + 1;
     }
 }
