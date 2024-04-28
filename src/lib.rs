@@ -4,17 +4,17 @@
  *--------------------------------------------------------------------------------------------------------*/
 //! The value type TickId that specifies a specific tick in a simulation.
 //!
-//! Usually a tick is 16 ms, but can be any integer period of time.
+//! Usually a tick is 16 ms or 32 ms, but can be any integer period of time, except 0.
 
 use core::fmt;
 use std::ops::{Add, AddAssign, Sub, SubAssign};
 
-#[derive(Default, Debug, Clone, Copy, PartialEq, PartialOrd)]
+#[derive(Default, Debug, Clone, Copy, Eq, PartialEq, PartialOrd)]
 pub struct TickId(pub u32);
 
 impl fmt::Display for TickId {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "TickId: {}", self.0)
+        write!(f, "TickId:{}", self.0)
     }
 }
 
@@ -92,7 +92,6 @@ mod tests {
 
         println!("output: {}", result);
     }
-
 
     #[test]
     fn test_sub() {
