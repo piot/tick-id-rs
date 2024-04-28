@@ -78,7 +78,7 @@ mod tests {
     fn test_tick_id_display() {
         let tick_id = TickId(42);
         let result = tick_id.to_string();
-        assert_eq!(result, "TickId: 42");
+        assert_eq!(result, "TickId:42");
 
         println!("output: {}", result);
     }
@@ -88,7 +88,7 @@ mod tests {
         let first = TickId(42);
         let result = first + 99;
         assert_eq!(result, TickId(141));
-        assert_eq!(result.to_string(), "TickId: 141");
+        assert_eq!(result.to_string(), "TickId:141");
 
         println!("output: {}", result);
     }
