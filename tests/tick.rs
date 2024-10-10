@@ -4,7 +4,7 @@ use tick_id::TickId;
 fn test_tick_id_display() {
     let tick_id = TickId(42);
     let result = tick_id.to_string();
-    assert_eq!(result, "tick:002A");
+    assert_eq!(result, "tick:0000002A");
 
     println!("output: {}", result);
 }
@@ -14,7 +14,7 @@ fn test_add() {
     let first = TickId(42);
     let result = first + 99;
     assert_eq!(result, TickId(141));
-    assert_eq!(result.to_string(), "tick:008D");
+    assert_eq!(result.to_string(), "tick:0000008D");
 
     println!("output: {}", result);
 }
@@ -48,7 +48,7 @@ fn test_tick_id_sub_3() {
     let first = TickId(0);
     let second = TickId(u32::MAX);
     let result = second - first;
-    assert_eq!(result, 4294967295);
+    assert_eq!(result, u32::MAX.into());
 }
 
 #[test]

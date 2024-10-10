@@ -1,4 +1,4 @@
-# 📦 tick-id-rs
+# 📦 tick-id
 
 Session unique **Tick ID** that specifies a specific tick in a deterministic simulation.
 
